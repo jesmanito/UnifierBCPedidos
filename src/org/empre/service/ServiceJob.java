@@ -14,6 +14,6 @@ public class ServiceJob implements Job {
         // TODO Implement this method
         System.out.println("16 ANTES DE MAIN");
     MainProcess mainProcess = new MainProcess();
-    mainProcess.init();
+    //mainProcess.init();
     }
 }

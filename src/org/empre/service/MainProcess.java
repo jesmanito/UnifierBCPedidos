@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Properties;
 
 import org.empre.ServiceAuth;
+import org.empre.bean.BPJson;
 import org.empre.bean.FetchFilterCriteria;
 import org.empre.unifier.FetchRecordBP;
 
@@ -20,21 +21,21 @@ import org.json.JSONObject;
 
 public class MainProcess {
    
-public void init() 
- //public static void main(String[] args)
+//public void init() 
+ public static void main(String[] args)
  {
         
-      System.out.println("21 DENTRO DE MAIN");
+
     FetchRecordBP fetchRecordBP = new FetchRecordBP();  
     List<FetchFilterCriteria.Filter> filterlist = new ArrayList<>();
       String entorno = GlobalInfo.ENTORNO;
     String codBC = "A3";
-    int rev = 4;
+    int rev = 1;
     String codBP = null;
     String codBPCH = null;
     String bpname = null;
     String value = "ID091-15000";
-    String  json = null;
+    String  fetchJson = null;
     JsonNode tok = null;
      
      if (codBC.equals("A11")){
@@ -84,7 +85,7 @@ public void init()
          FetchFilterCriteria.FilterCriteria filterCriteria = new FetchFilterCriteria.FilterCriteria("",filterlist);
        FetchFilterCriteria fetchFilterCriteria = new FetchFilterCriteria(bpname,"yes","uuu_tab_id;title",filterCriteria,"uuu_user_id;uuu_record_last_update_date;uconContractNumberTXT120;status");
 
-     json = new Gson().toJson(fetchFilterCriteria);
+     fetchJson = new Gson().toJson(fetchFilterCriteria);
 
       System.out.println("DENTRO DE MAIN 2");
 
@@ -101,8 +102,8 @@ public void init()
       
       JSONObject responseJson = null;   
       try { //A UNIFIER
-System.out.println("REQUEST JSON:  "+json.toString());
-          responseJson = fetchRecordBP.callRestURL(json, "POST", tok, prop.getProperty(entorno+"_fetch_resource"));
+System.out.println("REQUEST JSON:  "+fetchJson.toString());
+          responseJson = fetchRecordBP.callRestURL(fetchJson, "POST", tok, prop.getProperty(entorno+"_fetch_resource"));
 System.out.println("RESPUESTA JSON:  "+responseJson.toString());
       }catch(Exception e){
       }
@@ -126,6 +127,44 @@ System.out.println("RESPUESTA JSON:  "+responseJson.toString());
       }else{
           System.out.println("record_no: NO TIENE  "+record_no);          
       }
+
+
+      BPJson bpJson = null;
+      String sendBPjson = null;
+
+      List<BPJson.DataItems> dataItems = new ArrayList<>();
+      List<BPJson.Bp_lineitems> lineasItems = new ArrayList<>();
+      List<BPJson.Cost_allocation> costItems = new ArrayList<>();
+      
+      BPJson.Options options = new BPJson.Options(codBP);
+      
+    //costItems.add(BPJson.Cost_allocation(1,50,"01.~~01.00.~~01.00.02.~~01.00.02.00.","short_desc_cost"));
+             
+    costItems.add(new BPJson.Cost_allocation(1.0,50.00,"01.~~01.00.~~01.00.02.~~01.00.02.00.","short_desc_cost"));
+             
+      
+     lineasItems.add(new BPJson.Bp_lineitems(1.0,"each",50.00,"descripción línea","Unit Cost","First Wall Panels 1~~MIL00900","short_desc",costItems));
+      
+     dataItems.add(new BPJson.DataItems("095-104-P-Q-16010" 
+                                        ,"5008" 
+                                        ,"GMP" 
+                                        ,"Dynamics" 
+                                        ,"ContractNumber" 
+                                        ,"SupplierOrderNumber" 
+                                        ,"(TEST) " 
+                                        ,"First Wall Panels 1~~MIL00900" 
+                                        ,"ContractDesc" 
+                                        ,50.00 
+                                        ,"2000"
+                                        ,"Company Administrator"
+                                        ,"Pending"
+                                        ,lineasItems));
+      
+      bpJson = new BPJson(options,dataItems);
+      
+      sendBPjson = new Gson().toJson(bpJson);
+      System.out.println("***333*** "+sendBPjson);
+
      
   }
 
