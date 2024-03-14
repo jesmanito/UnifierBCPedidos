@@ -136,6 +136,7 @@ System.out.println("RESPUESTA JSON:  "+responseJson.toString());
       List<BPJson.Bp_lineitems> lineasItems = new ArrayList<>();
       List<BPJson.Cost_allocation> costItems = new ArrayList<>();
       
+      
       BPJson.Options options = new BPJson.Options(codBP);
       
     //costItems.add(BPJson.Cost_allocation(1,50,"01.~~01.00.~~01.00.02.~~01.00.02.00.","short_desc_cost"));
